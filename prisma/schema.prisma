@@ -28,23 +28,90 @@ model admin {
 }
 
 model personal_data {
-  id          Int       @id @default(autoincrement())
-  uuid        String    @unique @default(uuid()) @db.VarChar(80)
-  name        String    @db.VarChar(80)
-  rg_document String    @db.VarChar(11)
-  email       String    @db.VarChar(80)
-  phone       String    @db.VarChar(11)
+  id          Int        @id @default(autoincrement())
+  uuid        String     @unique @default(uuid()) @db.VarChar(80)
+  name        String     @db.VarChar(80)
+  rg_document String     @unique @db.VarChar(11)
+  cpf         String     @unique @db.VarChar(11)
+  email       String     @db.VarChar(80)
+  phone       String     @db.VarChar(11)
   gender      GENDER
-  created_at  DateTime  @default(now())
-  updated_at  DateTime  @updatedAt
+  created_at  DateTime   @default(now())
+  updated_at  DateTime   @updatedAt
   deleted_at  DateTime?
   admin       admin[]
+  client      client[]
+  addresses   address[]
+  employee    employee[]
 
   @@map("personal_data")
+}
+
+model client {
+  id               Int            @id @default(autoincrement())
+  uuid             String         @unique @default(uuid()) @db.VarChar(80)
+  personal_data_id Int            @unique
+  created_at       DateTime       @default(now())
+  updated_at       DateTime       @updatedAt
+  deleted_at       DateTime?
+  personal_data    personal_data? @relation(fields: [personal_data_id], references: [id])
+  payment          payment?       @relation(fields: [payment_id], references: [id])
+  payment_id       Int?
+
+  @@map("clients")
+}
+
+model payment {
+  id         Int            @id @default(autoincrement())
+  uuid       String         @unique @default(uuid()) @db.VarChar(80)
+  status     STATUS_PAYMENT
+  created_at DateTime       @default(now())
+  updated_at DateTime       @updatedAt
+  deleted_at DateTime?
+  client     client[]
+
+  @@map("payments")
+}
+
+model employee {
+  id               Int           @id @default(autoincrement())
+  uuid             String        @unique @default(uuid()) @db.VarChar(80)
+  office           OFFICES
+  personal_data    personal_data @relation(fields: [personal_data_id], references: [id])
+  personal_data_id Int
+
+  @@map("employees")
+}
+
+model address {
+  id               Int            @id @default(autoincrement())
+  uuid             String         @unique @default(uuid()) @db.VarChar(80)
+  zipcode          String
+  address          String
+  number           String?
+  city             String
+  complement       String
+  neighborhood     String
+  personal_data    personal_data? @relation(fields: [personal_data_id], references: [id])
+  personal_data_id Int?
+
+  @@map("addresses")
+}
+
+enum STATUS_PAYMENT {
+  PAID
+  EXPIRED
+  CANCELLED
+  AWAITING_PAYMENT
 }
 
 enum GENDER {
   M
   F
   NB
+}
+
+enum OFFICES {
+  PERSONAL_TRAINER
+  CLEANER
 }
