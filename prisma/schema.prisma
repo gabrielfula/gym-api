@@ -28,20 +28,22 @@ model admin {
 }
 
 model personal_data {
-  id          Int        @id @default(autoincrement())
-  uuid        String     @unique @default(uuid()) @db.VarChar(80)
-  name        String     @db.VarChar(80)
-  rg_document String     @unique @db.VarChar(11)
-  cpf         String     @unique @db.VarChar(11)
-  email       String     @db.VarChar(80)
-  phone       String     @db.VarChar(11)
+  id          Int       @id @default(autoincrement())
+  uuid        String    @unique @default(uuid()) @db.VarChar(80)
+  name        String    @db.VarChar(80)
+  rg_document String    @unique @db.VarChar(11)
+  cpf         String    @unique @db.VarChar(11)
+  email       String    @db.VarChar(80)
+  phone       String    @db.VarChar(11)
   gender      GENDER
-  admin       admin[]
-  client      client[]
-  addresses   address[]
-  employee    employee[]
-  created_at  DateTime   @default(now())
-  updated_at  DateTime   @updatedAt
+  admin       admin?
+  client      client?
+  address_id  Int?
+  employee_id Int?
+  addresses   address?  @relation(fields: [address_id], references: [id])
+  employee    employee? @relation(fields: [employee_id], references: [id])
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @updatedAt
   deleted_at  DateTime?
 
   @@map("personal_data")
@@ -77,32 +79,32 @@ model payment {
 }
 
 model employee {
-  id               Int           @id @default(autoincrement())
-  uuid             String        @unique @default(uuid()) @db.VarChar(80)
+  id               Int             @id @default(autoincrement())
+  uuid             String          @unique @default(uuid()) @db.VarChar(80)
   office           OFFICES
-  personal_data    personal_data @relation(fields: [personal_data_id], references: [id])
   personal_data_id Int
-  created_at       DateTime      @default(now())
-  updated_at       DateTime      @updatedAt
+  created_at       DateTime        @default(now())
+  updated_at       DateTime        @updatedAt
   deleted_at       DateTime?
+  personal_data    personal_data[]
 
   @@map("employees")
 }
 
 model address {
-  id               Int            @id @default(autoincrement())
-  uuid             String         @unique @default(uuid()) @db.VarChar(80)
+  id               Int             @id @default(autoincrement())
+  uuid             String          @unique @default(uuid()) @db.VarChar(80)
   zipcode          String
   address          String
   number           String?
   city             String
   complement       String
   neighborhood     String
-  personal_data    personal_data? @relation(fields: [personal_data_id], references: [id])
   personal_data_id Int?
-  created_at       DateTime       @default(now())
-  updated_at       DateTime       @updatedAt
+  created_at       DateTime        @default(now())
+  updated_at       DateTime        @updatedAt
   deleted_at       DateTime?
+  personal_data    personal_data[]
 
   @@map("addresses")
 }
