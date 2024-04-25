@@ -19,10 +19,10 @@ model admin {
   username         String        @db.VarChar(80)
   password         String        @db.VarChar(80)
   personal_data_id Int           @unique
+  personal_data    personal_data @relation(fields: [personal_data_id], references: [id])
   created_at       DateTime      @default(now())
   updated_at       DateTime      @updatedAt
   deleted_at       DateTime?
-  personal_data    personal_data @relation(fields: [personal_data_id], references: [id])
 
   @@map("admins")
 }
@@ -36,13 +36,13 @@ model personal_data {
   email       String     @db.VarChar(80)
   phone       String     @db.VarChar(11)
   gender      GENDER
-  created_at  DateTime   @default(now())
-  updated_at  DateTime   @updatedAt
-  deleted_at  DateTime?
   admin       admin[]
   client      client[]
   addresses   address[]
   employee    employee[]
+  created_at  DateTime   @default(now())
+  updated_at  DateTime   @updatedAt
+  deleted_at  DateTime?
 
   @@map("personal_data")
 }
@@ -51,24 +51,27 @@ model client {
   id               Int            @id @default(autoincrement())
   uuid             String         @unique @default(uuid()) @db.VarChar(80)
   personal_data_id Int            @unique
-  created_at       DateTime       @default(now())
-  updated_at       DateTime       @updatedAt
-  deleted_at       DateTime?
+  enrollment       enrollment     @relation(fields: [enrollment_id], references: [id])
   personal_data    personal_data? @relation(fields: [personal_data_id], references: [id])
   payment          payment?       @relation(fields: [payment_id], references: [id])
   payment_id       Int?
+  enrollment_id    Int
+  created_at       DateTime       @default(now())
+  updated_at       DateTime       @updatedAt
+  deleted_at       DateTime?
 
   @@map("clients")
 }
 
 model payment {
-  id         Int            @id @default(autoincrement())
-  uuid       String         @unique @default(uuid()) @db.VarChar(80)
-  status     STATUS_PAYMENT
-  created_at DateTime       @default(now())
-  updated_at DateTime       @updatedAt
-  deleted_at DateTime?
-  client     client[]
+  id             Int            @id @default(autoincrement())
+  uuid           String         @unique @default(uuid()) @db.VarChar(80)
+  status         STATUS_PAYMENT
+  payment_method PAYMENT_METHOD
+  client         client[]
+  created_at     DateTime       @default(now())
+  updated_at     DateTime       @updatedAt
+  deleted_at     DateTime?
 
   @@map("payments")
 }
@@ -79,6 +82,9 @@ model employee {
   office           OFFICES
   personal_data    personal_data @relation(fields: [personal_data_id], references: [id])
   personal_data_id Int
+  created_at       DateTime      @default(now())
+  updated_at       DateTime      @updatedAt
+  deleted_at       DateTime?
 
   @@map("employees")
 }
@@ -94,8 +100,28 @@ model address {
   neighborhood     String
   personal_data    personal_data? @relation(fields: [personal_data_id], references: [id])
   personal_data_id Int?
+  created_at       DateTime       @default(now())
+  updated_at       DateTime       @updatedAt
+  deleted_at       DateTime?
 
   @@map("addresses")
+}
+
+model enrollment {
+  id         Int                @id @default(autoincrement())
+  uuid       String             @unique @default(uuid()) @db.VarChar(80)
+  status     STATUS_ENROLLMENTS
+  client     client[]
+  created_at DateTime           @default(now())
+  updated_at DateTime           @updatedAt
+  deleted_at DateTime?
+
+  @@map("enrollments")
+}
+
+enum STATUS_ENROLLMENTS {
+  ACTIVE
+  CANCELLED
 }
 
 enum STATUS_PAYMENT {
@@ -109,6 +135,13 @@ enum GENDER {
   M
   F
   NB
+}
+
+enum PAYMENT_METHOD {
+  CREDIT_CARD
+  PIX
+  DEBIT_CARD
+  MONEY
 }
 
 enum OFFICES {
