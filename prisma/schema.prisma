@@ -28,23 +28,24 @@ model admin {
 }
 
 model personal_data {
-  id          Int       @id @default(autoincrement())
-  uuid        String    @unique @default(uuid()) @db.VarChar(80)
-  name        String    @db.VarChar(80)
-  rg_document String    @unique @db.VarChar(11)
-  cpf         String    @unique @db.VarChar(11)
-  email       String    @db.VarChar(80)
-  phone       String    @db.VarChar(11)
-  gender      GENDER
-  admin       admin?
-  client      client?
-  address_id  Int?
-  employee_id Int?
-  addresses   address?  @relation(fields: [address_id], references: [id])
-  employee    employee? @relation(fields: [employee_id], references: [id])
-  created_at  DateTime  @default(now())
-  updated_at  DateTime  @updatedAt
-  deleted_at  DateTime?
+  id            Int       @id @default(autoincrement())
+  uuid          String    @unique @default(uuid()) @db.VarChar(80)
+  name          String    @db.VarChar(80)
+  rg_document   String    @unique @db.VarChar(11)
+  cpf           String    @unique @db.VarChar(11)
+  email         String    @db.VarChar(80)
+  phone         String    @db.VarChar(11)
+  date_of_birth DateTime
+  gender        GENDER
+  admin         admin?
+  client        client?
+  address_id    Int?
+  employee_id   Int?
+  addresses     address?  @relation(fields: [address_id], references: [id])
+  employee      employee? @relation(fields: [employee_id], references: [id])
+  created_at    DateTime  @default(now())
+  updated_at    DateTime  @updatedAt
+  deleted_at    DateTime?
 
   @@map("personal_data")
 }
@@ -55,8 +56,8 @@ model client {
   personal_data_id Int            @unique
   enrollment       enrollment     @relation(fields: [enrollment_id], references: [id])
   personal_data    personal_data? @relation(fields: [personal_data_id], references: [id])
-  payment          payment?       @relation(fields: [payment_id], references: [id])
-  payment_id       Int?
+  payment          payment        @relation(fields: [payment_id], references: [id])
+  payment_id       Int
   enrollment_id    Int
   created_at       DateTime       @default(now())
   updated_at       DateTime       @updatedAt
@@ -82,11 +83,11 @@ model employee {
   id               Int             @id @default(autoincrement())
   uuid             String          @unique @default(uuid()) @db.VarChar(80)
   office           OFFICES
+  personal_data    personal_data[]
   personal_data_id Int
   created_at       DateTime        @default(now())
   updated_at       DateTime        @updatedAt
   deleted_at       DateTime?
-  personal_data    personal_data[]
 
   @@map("employees")
 }
@@ -110,13 +111,14 @@ model address {
 }
 
 model enrollment {
-  id         Int                @id @default(autoincrement())
-  uuid       String             @unique @default(uuid()) @db.VarChar(80)
-  status     STATUS_ENROLLMENTS
-  client     client[]
-  created_at DateTime           @default(now())
-  updated_at DateTime           @updatedAt
-  deleted_at DateTime?
+  id           Int                @id @default(autoincrement())
+  uuid         String             @unique @default(uuid()) @db.VarChar(80)
+  payment_date DateTime
+  status       STATUS_ENROLLMENTS
+  client       client[]
+  created_at   DateTime           @default(now())
+  updated_at   DateTime           @updatedAt
+  deleted_at   DateTime?
 
   @@map("enrollments")
 }
