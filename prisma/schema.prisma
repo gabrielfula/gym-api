@@ -67,13 +67,14 @@ model client {
 }
 
 model payment {
-  id             Int            @id @default(autoincrement())
-  uuid           String         @unique @default(uuid()) @db.VarChar(80)
+  id             Int             @id @default(autoincrement())
+  uuid           String          @unique @default(uuid()) @db.VarChar(80)
   status         STATUS_PAYMENT
-  payment_method PAYMENT_METHOD
+  payment_method PAYMENT_METHOD?
   client         client[]
-  created_at     DateTime       @default(now())
-  updated_at     DateTime       @updatedAt
+  enrollment     enrollment[]
+  created_at     DateTime        @default(now())
+  updated_at     DateTime        @updatedAt
   deleted_at     DateTime?
 
   @@map("payments")
@@ -113,9 +114,11 @@ model address {
 model enrollment {
   id           Int                @id @default(autoincrement())
   uuid         String             @unique @default(uuid()) @db.VarChar(80)
-  payment_date DateTime
+  payment_date DateTime?
   status       STATUS_ENROLLMENTS
+  payment      payment?           @relation(fields: [payment_id], references: [id])
   client       client[]
+  payment_id   Int?
   created_at   DateTime           @default(now())
   updated_at   DateTime           @updatedAt
   deleted_at   DateTime?
@@ -151,4 +154,6 @@ enum PAYMENT_METHOD {
 enum OFFICES {
   PERSONAL_TRAINER
   CLEANER
+  TRAINEE
+  TEACHERS
 }
