@@ -1,12 +1,14 @@
-import { STATUS_ENROLLMENTS, enrollment } from "@prisma/client";
+import { STATUS_ENROLLMENTS, Enrollment } from "@prisma/client";
 
-class EnrollmentEntity implements enrollment {
-  id: number;
-  uuid: string;
-  status: STATUS_ENROLLMENTS;
-  created_at: Date;
-  updated_at: Date;
-  deleted_at: Date;
+class EnrollmentEntity implements Enrollment {
+  id:           number;
+  uuid:         string;
+  payment_id:   number;
+  payment_date: Date;
+  status:       STATUS_ENROLLMENTS;
+  created_at:   Date;
+  updated_at:   Date;
+  deleted_at:   Date;
 }
 
 export { EnrollmentEntity }

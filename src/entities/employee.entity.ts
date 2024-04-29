@@ -1,6 +1,6 @@
-import { OFFICES, employee } from "@prisma/client";
+import { OFFICES, Employee } from "@prisma/client";
 
-class EmployeeEntity implements employee {
+class EmployeeEntity implements Employee {
   id: number;
   uuid: string;
   office: OFFICES;

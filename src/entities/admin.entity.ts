@@ -1,6 +1,6 @@
-import { admin } from '@prisma/client';
+import { Admin } from '@prisma/client';
 
-class AdminEntity implements admin {
+class AdminEntity implements Admin {
   id: number;
   uuid: string;
   username: string;

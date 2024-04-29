@@ -1,6 +1,6 @@
-import { client } from "@prisma/client";
+import { Client } from "@prisma/client";
 
-class ClientEntity implements client {
+class ClientEntity implements Client {
   id: number;
   uuid: string;
   personal_data_id: number;

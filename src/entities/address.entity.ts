@@ -1,6 +1,6 @@
-import { address } from "@prisma/client";
+import { Address } from "@prisma/client";
 
-class AddressEntity implements address {
+class AddressEntity implements Address {
   id: number;
   uuid: string;
   zipcode: string;
